@@ -36,7 +36,15 @@ export interface Bomb {
   vy: number;
 }
 
-export type EnemyType = 'missile' | 'radar' | 'fuel' | 'interceptor' | 'reactor' | 'turret';
+export type EnemyType =
+  | 'missile'
+  | 'radar'
+  | 'fuel'
+  | 'interceptor'
+  | 'reactor'
+  | 'turret'
+  | 'crystal'
+  | 'relic';
 
 export interface Enemy {
   id: number;

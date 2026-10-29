@@ -6,7 +6,7 @@ import { StageData, Point } from '../types/game';
 function generateCavernPoints(
   totalLength: number,
   type: 'open_mountains' | 'medium_cavern' | 'deep_labyrinth' | 'fortress' | 'reactor_bunker',
-  step = 160
+  step = 110
 ): { ceiling: Point[]; floor: Point[] } {
   const ceiling: Point[] = [];
   const floor: Point[] = [];
@@ -59,9 +59,18 @@ function generateCavernPoints(
         break;
     }
 
-    // Ensure ceiling and floor never overlap or get too tight
-    if (floorY - ceilY < 120) {
-      floorY = ceilY + 120;
+    // Break up the long smooth slopes with irregular cave teeth and ledges.
+    const roofTeeth = Math.pow(Math.max(0, Math.sin(i * 0.71 + 0.8)), 4) * 24;
+    const floorTeeth = Math.pow(Math.max(0, Math.cos(i * 0.59 + 0.3)), 4) * 20;
+    const wallRipple = Math.sin(i * 1.37) * 9 + Math.cos(i * 0.93) * 7;
+    ceilY += roofTeeth + wallRipple;
+    floorY += wallRipple - floorTeeth;
+
+    // Keep the passage challenging but wide enough for the ship to navigate.
+    ceilY = Math.max(20, Math.min(340, ceilY));
+    floorY = Math.min(520, Math.max(ceilY + 165, floorY));
+    if (floorY - ceilY < 165) {
+      floorY = ceilY + 165;
     }
 
     ceiling.push({ x, y: ceilY });
@@ -75,7 +84,7 @@ export const STAGES: StageData[] = [
   {
     id: 1,
     name: 'STAGE 1',
-    subtitle: 'TRAINING FLIGHT & MOUNTAIN RIDGE',
+    subtitle: 'RUGGED RIDGE & HIDDEN CAVE CACHE',
     length: 6500,
     scrollSpeed: 190,
     ...generateCavernPoints(6500, 'open_mountains'),
@@ -86,16 +95,19 @@ export const STAGES: StageData[] = [
       { type: 'missile', x: 1700, attachTo: 'floor' },
       { type: 'radar', x: 2100, attachTo: 'floor' },
       { type: 'interceptor', x: 2500, y: 180 },
+      { type: 'crystal', x: 2350, y: 270 },
       { type: 'fuel', x: 2800, attachTo: 'floor' },
       { type: 'missile', x: 3100, attachTo: 'floor' },
       { type: 'missile', x: 3450, attachTo: 'floor' },
       { type: 'radar', x: 3800, attachTo: 'floor' },
+      { type: 'relic', x: 4050, attachTo: 'ceiling' },
       { type: 'interceptor', x: 4200, y: 220 },
       { type: 'interceptor', x: 4350, y: 260 },
       { type: 'fuel', x: 4700, attachTo: 'floor' },
       { type: 'missile', x: 5050, attachTo: 'floor' },
       { type: 'radar', x: 5400, attachTo: 'floor' },
       { type: 'missile', x: 5800, attachTo: 'floor' },
+      { type: 'crystal', x: 6100, y: 300 },
     ],
     palette: {
       sky: '#040714',
@@ -108,7 +120,7 @@ export const STAGES: StageData[] = [
   {
     id: 2,
     name: 'STAGE 2',
-    subtitle: 'THE RED CANYON & TRACKING MISSILES',
+    subtitle: 'RED CANYON CAVES & TRACKING MISSILES',
     length: 7000,
     scrollSpeed: 210,
     ...generateCavernPoints(7000, 'medium_cavern'),
@@ -116,19 +128,23 @@ export const STAGES: StageData[] = [
       { type: 'missile', x: 650, attachTo: 'floor' },
       { type: 'radar', x: 1000, attachTo: 'floor' },
       { type: 'fuel', x: 1350, attachTo: 'floor' },
+      { type: 'crystal', x: 1500, attachTo: 'ceiling' },
       { type: 'interceptor', x: 1650, y: 200 },
       { type: 'missile', x: 1950, attachTo: 'floor' },
       { type: 'turret', x: 2300, attachTo: 'ceiling' },
+      { type: 'relic', x: 2500, y: 290 },
       { type: 'radar', x: 2650, attachTo: 'floor' },
       { type: 'fuel', x: 3000, attachTo: 'floor' },
       { type: 'missile', x: 3350, attachTo: 'floor' },
       { type: 'interceptor', x: 3600, y: 240 },
       { type: 'turret', x: 3950, attachTo: 'ceiling' },
       { type: 'missile', x: 4300, attachTo: 'floor' },
+      { type: 'crystal', x: 4500, attachTo: 'ceiling' },
       { type: 'fuel', x: 4700, attachTo: 'floor' },
       { type: 'radar', x: 5100, attachTo: 'floor' },
       { type: 'missile', x: 5500, attachTo: 'floor' },
       { type: 'interceptor', x: 5900, y: 210 },
+      { type: 'relic', x: 6100, attachTo: 'floor' },
       { type: 'missile', x: 6300, attachTo: 'floor' },
     ],
     palette: {
@@ -151,20 +167,24 @@ export const STAGES: StageData[] = [
       { type: 'turret', x: 950, attachTo: 'ceiling' },
       { type: 'missile', x: 1250, attachTo: 'floor' },
       { type: 'fuel', x: 1600, attachTo: 'floor' },
+      { type: 'relic', x: 1800, attachTo: 'ceiling' },
       { type: 'interceptor', x: 1950, y: 250 },
       { type: 'interceptor', x: 2100, y: 290 },
       { type: 'missile', x: 2450, attachTo: 'floor' },
       { type: 'turret', x: 2800, attachTo: 'ceiling' },
+      { type: 'crystal', x: 3000, y: 300 },
       { type: 'radar', x: 3150, attachTo: 'floor' },
       { type: 'fuel', x: 3550, attachTo: 'floor' },
       { type: 'missile', x: 3950, attachTo: 'floor' },
       { type: 'interceptor', x: 4300, y: 270 },
       { type: 'turret', x: 4650, attachTo: 'ceiling' },
       { type: 'fuel', x: 5050, attachTo: 'floor' },
+      { type: 'relic', x: 5250, attachTo: 'ceiling' },
       { type: 'missile', x: 5450, attachTo: 'floor' },
       { type: 'radar', x: 5850, attachTo: 'floor' },
       { type: 'interceptor', x: 6200, y: 260 },
       { type: 'missile', x: 6600, attachTo: 'floor' },
+      { type: 'crystal', x: 6800, attachTo: 'floor' },
       { type: 'turret', x: 7000, attachTo: 'ceiling' },
     ],
     palette: {
@@ -187,21 +207,25 @@ export const STAGES: StageData[] = [
       { type: 'turret', x: 1000, attachTo: 'ceiling' },
       { type: 'radar', x: 1350, attachTo: 'floor' },
       { type: 'fuel', x: 1700, attachTo: 'floor' },
+      { type: 'crystal', x: 1850, y: 300 },
       { type: 'interceptor', x: 2050, y: 280 },
       { type: 'interceptor', x: 2200, y: 220 },
       { type: 'missile', x: 2550, attachTo: 'floor' },
       { type: 'turret', x: 2900, attachTo: 'ceiling' },
+      { type: 'relic', x: 3100, attachTo: 'floor' },
       { type: 'missile', x: 3250, attachTo: 'floor' },
       { type: 'fuel', x: 3600, attachTo: 'floor' },
       { type: 'radar', x: 4000, attachTo: 'floor' },
       { type: 'turret', x: 4350, attachTo: 'ceiling' },
       { type: 'missile', x: 4700, attachTo: 'floor' },
+      { type: 'crystal', x: 4900, attachTo: 'ceiling' },
       { type: 'interceptor', x: 5100, y: 260 },
       { type: 'fuel', x: 5500, attachTo: 'floor' },
       { type: 'missile', x: 5900, attachTo: 'floor' },
       { type: 'turret', x: 6300, attachTo: 'ceiling' },
       { type: 'radar', x: 6700, attachTo: 'floor' },
       { type: 'missile', x: 7100, attachTo: 'floor' },
+      { type: 'relic', x: 7300, y: 300 },
       { type: 'interceptor', x: 7500, y: 270 },
     ],
     palette: {
@@ -224,19 +248,23 @@ export const STAGES: StageData[] = [
       { type: 'radar', x: 1100, attachTo: 'floor' },
       { type: 'turret', x: 1450, attachTo: 'ceiling' },
       { type: 'fuel', x: 1800, attachTo: 'floor' },
+      { type: 'crystal', x: 2000, attachTo: 'ceiling' },
       { type: 'interceptor', x: 2200, y: 270 },
       { type: 'missile', x: 2600, attachTo: 'floor' },
       { type: 'turret', x: 3000, attachTo: 'ceiling' },
       { type: 'radar', x: 3400, attachTo: 'floor' },
+      { type: 'relic', x: 3650, y: 300 },
       { type: 'fuel', x: 3850, attachTo: 'floor' },
       { type: 'interceptor', x: 4250, y: 250 },
       { type: 'missile', x: 4650, attachTo: 'floor' },
       { type: 'turret', x: 5050, attachTo: 'ceiling' },
       { type: 'fuel', x: 5500, attachTo: 'floor' },
+      { type: 'crystal', x: 5700, attachTo: 'ceiling' },
       { type: 'missile', x: 5950, attachTo: 'floor' },
       { type: 'radar', x: 6400, attachTo: 'floor' },
       { type: 'turret', x: 6850, attachTo: 'ceiling' },
       { type: 'missile', x: 7250, attachTo: 'floor' },
+      { type: 'relic', x: 7500, attachTo: 'floor' },
       // The Ultimate Target: THE REACTOR CORE!
       { type: 'reactor', x: 7850, attachTo: 'floor' },
     ],

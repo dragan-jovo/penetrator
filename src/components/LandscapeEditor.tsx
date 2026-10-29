@@ -173,6 +173,10 @@ export const LandscapeEditor: React.FC<LandscapeEditorProps> = ({ onBack, onTest
           ? '#FF00E1'
           : e.type === 'fuel'
           ? '#00FF66'
+          : e.type === 'crystal'
+          ? '#42F5D4'
+          : e.type === 'relic'
+          ? '#FFC857'
           : e.type === 'missile'
           ? '#FF0033'
           : e.type === 'radar'
@@ -344,6 +348,26 @@ export const LandscapeEditor: React.FC<LandscapeEditorProps> = ({ onBack, onTest
               }`}
             >
               + Fuel
+            </button>
+            <button
+              onClick={() => setSelectedTool('crystal')}
+              className={`px-2 py-1 text-xs rounded border transition-colors ${
+                selectedTool === 'crystal'
+                  ? 'bg-teal-300 text-slate-950 font-bold border-teal-200'
+                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
+              }`}
+            >
+              + Crystal
+            </button>
+            <button
+              onClick={() => setSelectedTool('relic')}
+              className={`px-2 py-1 text-xs rounded border transition-colors ${
+                selectedTool === 'relic'
+                  ? 'bg-amber-300 text-slate-950 font-bold border-amber-200'
+                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
+              }`}
+            >
+              + Relic
             </button>
             <button
               onClick={() => setSelectedTool('interceptor')}

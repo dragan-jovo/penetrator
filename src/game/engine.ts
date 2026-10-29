@@ -199,6 +199,14 @@ export class GameEngine {
         eWidth = 26;
         eHeight = 26;
         points = 250;
+      } else if (def.type === 'crystal') {
+        eWidth = 22;
+        eHeight = 24;
+        points = 400;
+      } else if (def.type === 'relic') {
+        eWidth = 26;
+        eHeight = 28;
+        points = 1000;
       } else if (def.type === 'interceptor') {
         eWidth = 24;
         eHeight = 16;
@@ -522,6 +530,7 @@ export class GameEngine {
       for (let j = this.enemies.length - 1; j >= 0; j--) {
         const e = this.enemies[j];
         if (!e.active) continue;
+        if (e.type === 'crystal' || e.type === 'relic') continue;
 
         if (
           laser.x >= e.x - e.width / 2 &&
@@ -586,6 +595,7 @@ export class GameEngine {
       for (let j = this.enemies.length - 1; j >= 0; j--) {
         const e = this.enemies[j];
         if (!e.active) continue;
+        if (e.type === 'crystal' || e.type === 'relic') continue;
 
         if (
           bomb.x >= e.x - e.width / 2 - 4 &&
@@ -700,8 +710,7 @@ export class GameEngine {
         playerBox.bottom >= e.y - e.height / 2 &&
         playerBox.top <= e.y + e.height / 2
       ) {
-        if (e.type === 'fuel') {
-          // Fuel pickup bonus!
+        if (e.type === 'fuel' || e.type === 'crystal' || e.type === 'relic') {
           this.destroyEnemy(e, i);
         } else {
           // Collision with enemy!
@@ -732,6 +741,20 @@ export class GameEngine {
         maxLife: 0.9,
       });
       this.triggerSpark(e.x, e.y, '#00FF66');
+    } else if (e.type === 'crystal' || e.type === 'relic') {
+      sound.playFuelPickup();
+      const isRelic = e.type === 'relic';
+      const color = isRelic ? '#FFD166' : '#5FFFE0';
+      this.floatingTexts.push({
+        id: this.nextEntityId++,
+        text: isRelic ? 'ANCIENT RELIC' : 'CAVE CRYSTAL',
+        x: e.x,
+        y: e.y - 14,
+        color,
+        life: 1.1,
+        maxLife: 1.1,
+      });
+      this.triggerSpark(e.x, e.y, color);
     } else if (e.type === 'reactor') {
       // THE REACTOR HIT! Meltdown initiation!
       sound.playExplosion('large');
@@ -1128,6 +1151,43 @@ export class GameEngine {
         ctx.fillRect(-5, -7, 10, 3);
         ctx.fillRect(-5, -7, 3, 14);
         ctx.fillRect(-5, -1, 7, 3);
+      } else if (e.type === 'crystal') {
+        const pulse = Math.sin(Date.now() / 180 + e.x) * 0.18 + 0.82;
+        ctx.shadowColor = '#5FFFE0';
+        ctx.shadowBlur = 14 * pulse;
+        ctx.fillStyle = '#42F5D4';
+        ctx.beginPath();
+        ctx.moveTo(0, -13);
+        ctx.lineTo(9, -2);
+        ctx.lineTo(5, 11);
+        ctx.lineTo(0, 14);
+        ctx.lineTo(-5, 11);
+        ctx.lineTo(-9, -2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#D8FFF8';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.fillRect(-2, -8, 2, 8);
+      } else if (e.type === 'relic') {
+        const pulse = Math.sin(Date.now() / 240 + e.x) * 0.15 + 0.85;
+        ctx.shadowColor = '#FFC857';
+        ctx.shadowBlur = 12 * pulse;
+        ctx.fillStyle = '#8B5E20';
+        ctx.fillRect(-10, -10, 20, 20);
+        ctx.fillStyle = '#E5A93D';
+        ctx.fillRect(-7, -7, 14, 14);
+        ctx.fillStyle = '#FFF1B8';
+        ctx.beginPath();
+        ctx.moveTo(0, -5);
+        ctx.lineTo(5, 0);
+        ctx.lineTo(0, 5);
+        ctx.lineTo(-5, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowBlur = 0;
       } else if (e.type === 'interceptor') {
         // Sleek alien interceptor fighter
         ctx.fillStyle = '#FF0055';
@@ -1352,7 +1412,16 @@ export class GameEngine {
       if (!e.active) continue;
       const rx = e.x * scaleX;
       const ry = radarY + e.y * scaleY;
-      ctx.fillStyle = e.type === 'reactor' ? '#FF00E1' : e.type === 'fuel' ? '#00FF66' : '#FF0033';
+      ctx.fillStyle =
+        e.type === 'reactor'
+          ? '#FF00E1'
+          : e.type === 'fuel'
+          ? '#00FF66'
+          : e.type === 'crystal'
+          ? '#42F5D4'
+          : e.type === 'relic'
+          ? '#FFC857'
+          : '#FF0033';
       ctx.fillRect(rx - 1.5, ry - 1.5, 3, 3);
     }
 
