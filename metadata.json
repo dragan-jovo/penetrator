@@ -1,0 +1,6 @@
+{
+  "name": "Penetrator - Retro 1982 Arcade Classic",
+  "description": "Authentic homage to the legendary 1982 arcade shooter Penetrator for ZX Spectrum & Commodore 64, with cavern navigation, missile evasion, reactor core run, and landscape editor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
